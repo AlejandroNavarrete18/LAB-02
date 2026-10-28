@@ -4,9 +4,7 @@
 Demostrar por qué una contraseña en texto claro es un riesgo y cómo almacenar únicamente un hash con sal (bcrypt vía `pgcrypto`) permite verificar la contraseña sin poder recuperarla.
 
 ## Comando o procedimiento
-```bash
-psql "host=localhost dbname=Lab01 user=Localhost" -a -f sql/01-credenciales.sql
-```
+
 
 ## Resultado obtenido
 

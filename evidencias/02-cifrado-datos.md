@@ -4,10 +4,7 @@
 Proteger el campo RFC con cifrado simétrico (`pgp_sym_encrypt`) de forma que no sea legible con un simple `SELECT`, pero pueda recuperarse con la clave.
 
 ## Comando o procedimiento
-```bash
-export LAB_CLAVE='CLAVE-DE-PRUEBA'   # valor ficticio, solo en la terminal
-psql "host=localhost dbname=TU_BASE user=TU_USUARIO" -a -v clave_lab="$LAB_CLAVE" -f sql/02-cifrado-datos.sql
-```
+
 
 ## Resultado obtenido
 
