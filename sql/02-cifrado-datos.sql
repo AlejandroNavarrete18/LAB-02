@@ -43,3 +43,4 @@ END $$;
   \echo 'AVISO: variable clave_lab no definida. Ejecuta con -v clave_lab="$LAB_CLAVE"'
 \endif
 
+

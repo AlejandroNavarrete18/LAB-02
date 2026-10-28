@@ -4,22 +4,27 @@
 Demostrar por qué una contraseña en texto claro es un riesgo y cómo almacenar únicamente un hash con sal (bcrypt vía `pgcrypto`) permite verificar la contraseña sin poder recuperarla.
 
 ## Comando o procedimiento
-
+Se ejecutó `sql/01-credenciales.sql` en la conexión Lab01 (base `postgres`, usuario `postgres`, localhost:5432) desde VS Code con la extensión SQLTools, ejecutando cada bloque por separado:
+```sql
+SELECT * FROM usuarios_insegura;
+SELECT crypt('Password123', gen_salt('bf'));
+SELECT * FROM usuarios_segura;
+SELECT usuario, password_hash = crypt('Password123', password_hash) AS contraseña_correcta
+FROM usuarios_segura WHERE usuario = 'juan';
+```
 
 ## Resultado obtenido
 
-### 1. Tabla insegura (`SELECT * FROM usuarios_insegura;`)
+### 1. Tabla insegura
 ```
-<!-- id	usuario	password
-     1	juan	Password123
- -->
+ id | usuario |  password
+----+---------+-------------
+  1 | juan    | Password123
 ```
 ### 2. Dos ejecuciones de `crypt('Password123', gen_salt('bf'))`
 ```
-<!-- 
-    "hash_1": "$2a$06$SCf8JRvcR63a75Ayp9iRauRocL97yTQRcgORzORcu18izcMNN/v8G"
-    "hash_2": "$2a$06$0JUoejj2iondybnnpvonwubPLoDTux6VJG2BY.aBNnsQ.HeIk4oWy"
- -->
+hash_1: $2a$06$SCf8JRvcR63a75Ayp9iRauRocL97yTQRcgORzORcu18izcMNN/v8G
+hash_2: $2a$06$0JUoejj2iondybnnpvonwubPLoDTux6VJG2BY.aBNnsQ.HeIk4oWy
 ```
 ### 3. Tabla `usuarios_segura`
 
@@ -52,9 +57,8 @@ Obtendría de inmediato `juan / Password123`. No necesita romper nada: una filtr
 3. No hace falta recuperarla porque basta con recalcular `crypt(candidata, hash_guardado)`, que reutiliza la sal almacenada, y comparar.
 4. Un hash es una función unidireccional sin clave ni operación de descifrado; el cifrado es reversible con la clave. Para contraseñas se necesita verificar, no recuperar.
 
-**Extra:** `juan` y `maria` usan la misma contraseña y sus hashes son distintos por la sal.
 
-**Limitaciones (7.6):** bcrypt (`bf`) es aceptable pero `pgcrypto` no ofrece Argon2id; bcrypt solo considera los primeros 72 bytes de la contraseña; el costo por defecto (6) es bajo, conviene subirlo (`gen_salt('bf', 12)`). En una aplicación real el hash se calcula normalmente en la aplicación con la librería del framework, para que la contraseña en claro no viaje en una consulta SQL que pudiera quedar en logs.
+**Limitaciones (7.6):** En una aplicación real se usa el algoritmo recomendado por el framework y nunca se guarda la contraseña en texto claro ni se cifra con una clave fija.
 
 ## Conclusión
 Las contraseñas no se guardan ni se cifran: se almacena un hash con sal generado con un algoritmo diseñado para contraseñas. Esto limita el daño de una filtración, aunque no sustituye una buena política de contraseñas ni el control de acceso.

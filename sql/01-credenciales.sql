@@ -36,7 +36,4 @@ FROM usuarios_segura WHERE usuario = 'juan';
 SELECT usuario, password_hash = crypt('OtraPassword', password_hash) AS contraseña_correcta
 FROM usuarios_segura WHERE usuario = 'juan';
 
--- Extra: mismo password, dos usuarios -> hashes distintos gracias a la sal
-INSERT INTO usuarios_segura (usuario, password_hash)
-VALUES ('maria', crypt('Password123', gen_salt('bf', 10)));
-SELECT usuario, left(password_hash, 7) AS prefijo_algoritmo_costo, password_hash FROM usuarios_segura;
+
